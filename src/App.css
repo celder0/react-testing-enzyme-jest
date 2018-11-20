@@ -14,10 +14,13 @@
   grid-area: header;
 }
 
+.card-list {
+  grid-area: content;
+}
+
 .card {
   margin: 50px;
   padding: 50px;
-  grid-area: content;
   border: solid 1px grey;
   box-shadow: 4px 1px 1px grey;
 }

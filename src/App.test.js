@@ -1,5 +1,5 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 
 import App from './App';
 import constants from './constants';
@@ -9,7 +9,7 @@ describe('Landing page', () => {
   let app;
 
   beforeEach(() => {
-    app = shallow(<App />);
+    app = mount(<App />);
   });
 
   describe('the title', () => {
@@ -45,7 +45,7 @@ describe('Landing page', () => {
     it('has Pro players emphasized', () => {
       const proPlayer = app
         .find('[data-player]')
-        .findWhere(el => el.props().isPro);
+        .findWhere(el => el.props()['data-is-pro']);
       expect(proPlayer).toHaveLength(1);
       expect(proPlayer.props().styles).toMatchObject({
         fontWeight: expect.any(String)
@@ -79,5 +79,51 @@ describe('Landing page', () => {
     });
   });
 
-  describe('shows a list of searchable teams', () => {});
+  describe('shows a list of searchable teams', () => {
+    const teams = [
+      {
+        id: 1,
+        name: 'Birmingham Bolts',
+        location: 'Birmingham, Alabama',
+        colors: 'Purple, Yellow, Silver'
+      },
+      {
+        id: 2,
+        name: 'Orlando Rage',
+        location: 'Orlando, Florida',
+        colors: 'Red, Navy, Gold, White'
+      },
+      {
+        id: 3,
+        name: 'Seattle Street Sharks',
+        location: 'Seattle, Washington',
+        colors: 'Red, Gray, Blue, Black'
+      }
+    ];
+
+    describe('when a team is found', () => {
+      it('shows additional info about the team', () => {
+        const searchTeamInput = app.find('[data-team-search-input]');
+        expect(searchTeamInput.exists()).toBeTruthy();
+
+        const event = {
+          target: {
+            value: 'Birmingham Bolts'
+          }
+        };
+        searchTeamInput.simulate('change', event);
+
+        const searchTeamButton = app.find('[data-search-team-button]');
+        expect(searchTeamButton.exists()).toBeTruthy();
+
+        searchTeamButton.simulate('click');
+
+        const teamFound = app.find('[data-team-search-result]');
+        expect(teamFound).toHaveLength(1);
+        expect(teamFound.text()).toBe(
+          'Birmingham Bolts - Birmingham, Alabama - Colors: Purple, Yellow, Silver'
+        );
+      });
+    });
+  });
 });
